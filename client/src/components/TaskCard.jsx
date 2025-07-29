@@ -1,18 +1,28 @@
 import StatusColor from "./StatusColor";
-export default function TaskCard({ task }) {
-  const { title, status, description, category, timestamp } = task;
 
-  return (
-    <div className="mb-10 h-[150px] border rounded shadow hover:shadow-lg cursor-pointer p-4">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-sm">{description.slice(0, 40)}</p>
-      <div className="mt-2">
-        <StatusColor status={status} />
-      </div>
-      <span className="text-xs text-gray-500 block mt-2">Category: {category}</span>
-      <span className="text-xs text-gray-400 block mt-1">
-        {new Date(timestamp).toLocaleString()}
-      </span>
-    </div>
-  );
+export default function TaskCard({ task, onClick }) {
+	const { title, status, description, category, timestamp } = task;
+
+	return (
+		<div
+			className="mb-10 h-[100px] border rounded shadow hover:shadow-lg cursor-pointer pt-1 pl-3"
+			onClick={onClick}
+		>
+			<h3 className="text-lg font-semibold">{title}</h3>
+			<p className="text-sm">{description.slice(0, 40)}</p>
+
+			<div className="flex items-center justify-between mt-6 mr-2 text-xs text-gray-400">
+				<span>
+					{new Date(timestamp).toLocaleDateString("en-US", {
+						day: "2-digit",
+						month: "long",
+						year: "numeric",
+					})}
+				</span>
+				<div>
+					<StatusColor status={status} />
+				</div>
+			</div>
+		</div>
+	);
 }
