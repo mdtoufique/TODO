@@ -5,7 +5,6 @@ export default function StatusColor({ status }) {
 		ONGOING: "bg-blue-200 text-blue-800",
 		COLLABORATIVE_TASK: "bg-indigo-200 text-yellow-800",
 		DONE: "bg-green-200 text-green-800",
-		FAILED: "bg-red-200 text-red-800",
 	};
 	return (
 		<span

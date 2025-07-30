@@ -1,77 +1,36 @@
 import TaskCard from "./TaskCard";
-function TaskList({ category, status, onTaskClick }) {
-	const tasks = [
-		{
-			title: "Buy groceries",
-			description: "Milk, bread, eggs, and fruits",
-			status: "PENDING",
-			category: "shopping",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-		},
-		{
-			title: "Finish project report",
-			description: "Complete the final draft and submit",
-			status: "ONGOING",
-			category: "work",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-		},
-		{
-			title: "Call mom",
-			description: "Check in and chat about weekend plans",
-			status: "DONE",
-			category: "family",
-			timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-		},
-		{
-			title: "Gym workout",
-			description: "Leg day routine",
-			status: "PENDING",
-			category: "health",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
-		},
-		{
-			title: "Read new book",
-			description:
-				"Start readwejtbewbgjiewbjfsjdfjksdfjkdbjkgsbsk ing the novel received last week",
-			status: "FAILED",
-			category: "leisure",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), // 3 days ago
-		},
-		{
-			title: "Buy groceries",
-			description: "Milk, bread, eggs, and fruits",
-			status: "PENDING",
-			category: "shopping",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-		},
-		{
-			title: "Finish project report",
-			description: "Complete the final draft and submit",
-			status: "ONGOING",
-			category: "work",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-		},
-		{
-			title: "Call mom",
-			description: "Check in and chat about weekend plans",
-			status: "DONE",
-			category: "family",
-			timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-		},
-		{
-			title: "Gym workout",
-			description: "Leg day routine",
-			status: "PENDING",
-			category: "health",
-			timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
-		},
-	];
+import {fetchTasks} from "../api";
+import { useEffect,useState } from "react";
+function TaskList({ category, status, reload,onTaskClick }) {
+	
+
+	const [tasks, setTasks] = useState([]);
+	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		async function loadTasks() {
+			setLoading(true);
+			try {
+				const fetchedTasks = await fetchTasks(category, status);
+				setTasks(fetchedTasks);
+			} catch (error) {
+				// handle error (e.g., show notification)
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		loadTasks();
+	}, [category, status,reload]);
 
 	const filteredTasks = tasks.filter((task) => {
 		const matchCategory = category ? task.category === category : true;
 		const matchStatus = status ? task.status === status : true;
 		return matchCategory && matchStatus;
 	});
+	if (loading) return <p>Loading tasks...</p>;
+	if (!tasks.length) return <p>No tasks found.</p>;
+
 	return (
 		<div className="flex flex-wrap mt-10 gap-[5%] justify-start">
 			{filteredTasks.map((task, index) => (
@@ -81,6 +40,7 @@ function TaskList({ category, status, onTaskClick }) {
 				>
 					<TaskCard
 						task={task}
+					
 						onClick={() => onTaskClick(task)} // pass click handler to TaskCard
 					/>
 				</div>
