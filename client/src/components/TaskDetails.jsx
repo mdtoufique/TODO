@@ -96,10 +96,11 @@ export default function TaskDetails({
 			reloadTrigger();
 
 			onClose();
-		} catch (error) {
-			toast("error : ",error);
-			// Handle error, show message etc.
-		}
+		} catch (err) {
+  const msg = err.response?.data?.message || "failed";
+  setError(msg);
+  toast(` failed: ${msg}`);
+}
 	}
 	if (!isOpen) return null;
 

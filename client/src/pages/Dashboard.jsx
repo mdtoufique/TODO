@@ -3,9 +3,15 @@ import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
 import { fetchTasks,addTasks } from "../api";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 function Dashboard() {
-
+	const navigate = useNavigate();
+	const [error,setError]=useState("")
 	const [categories,setCategories]=useState([])
+	function handleLogout() {
+    localStorage.clear(); 
+    navigate("/login");
+  }
 	useEffect(() => {
   async function loadCategories() {
     try {
@@ -14,9 +20,11 @@ function Dashboard() {
         new Set(fetchedTasks.map(task => task.category).filter(Boolean))
       );
       setCategories(uniqueCategories);
-    } catch (error) {
-      console.error("Error fetching categories", error);
-    }
+    } catch (err) {
+  const msg = err.response?.data?.message || "Fetch category failed";
+  setError(msg);
+  toast(`Fetch category failed: ${msg}`);
+}
   }
 
   loadCategories();
@@ -113,9 +121,17 @@ const [ShowForm, setShowForm] = useState(false);
 
 					{/* Right: Username */}
 
-					<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-blue-700">
-						Username
-					</button>
+					<div className="flex items-center gap-3">
+            <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-blue-700">
+              Username
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
 				</header>
 
 				<div className="mx-[10%] mb-8">

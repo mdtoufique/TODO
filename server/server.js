@@ -1,10 +1,8 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config(); 
+
 import connectDB from "./utils/db.js";
 import app from "./app.js";
-
-dotenv.config(); // Load .env variables
-
 const PORT = process.env.PORT || 5000;
 
 // Connect to DB, then start server

@@ -20,6 +20,11 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: "general",
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     timestamp: {
       type: Date,
       default: () => {
@@ -29,7 +34,8 @@ const taskSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+  
 );
 
 const Task = mongoose.model("Task", taskSchema);

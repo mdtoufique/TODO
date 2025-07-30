@@ -1,21 +1,24 @@
 import TaskCard from "./TaskCard";
 import {fetchTasks} from "../api";
 import { useEffect,useState } from "react";
+import toast from "react-hot-toast";
 function TaskList({ category, status, reload,onTaskClick }) {
 	
 
 	const [tasks, setTasks] = useState([]);
 	const [loading, setLoading] = useState(false);
-
+	const [error,setError]=useState("");
 	useEffect(() => {
 		async function loadTasks() {
 			setLoading(true);
 			try {
 				const fetchedTasks = await fetchTasks(category, status);
 				setTasks(fetchedTasks);
-			} catch (error) {
-				// handle error (e.g., show notification)
-			} finally {
+			} catch (err) {
+  const msg = err.response?.data?.message || "fetch failed";
+  setError(msg);
+  toast(`fetch failed: ${msg}`);
+}finally {
 				setLoading(false);
 			}
 		}
@@ -29,7 +32,19 @@ function TaskList({ category, status, reload,onTaskClick }) {
 		return matchCategory && matchStatus;
 	});
 	if (loading) return <p>Loading tasks...</p>;
-	if (!tasks.length) return <p>No tasks found.</p>;
+	if (!tasks.length) return (
+		
+					<div className="flex flex-wrap  justify-center">
+						<img
+						src="/notask.jpg"
+						alt="NO Task Icon"
+						className="w-[60%] "
+						/>
+							
+						</div>
+						
+				
+	);
 
 	return (
 		<div className="flex flex-wrap mt-10 gap-[5%] justify-start">

@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors'
 import { verifyApiToken } from "./middlewares/auth.js";
-import taskRoutes from "./routes/taskRoutes.js"
 
+import taskRoutes from "./routes/taskRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
 
 const app = express();
 
@@ -31,5 +32,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/api/tasks', taskRoutes);
+
+app.use('/api/auth', authRoutes);
 
 export default app;
