@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { signupUser } from "../api";
@@ -22,7 +22,7 @@ export default function Signup() {
 		}
 	}, [navigate]);
 
-    
+
 	function handleChange(e) {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	}
