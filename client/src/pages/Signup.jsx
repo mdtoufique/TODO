@@ -33,7 +33,7 @@ export default function Signup() {
 
       // success logic here, e.g. redirect or message
     } catch (err) {
-  const msg = err.response?.data?.message || "Login failed";
+  const msg = err.response?.data?.message || "";
   setError(msg);
   toast(`Signup failed: ${msg}`);
 }
