@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { editTask,deleteTask } from "../api";
+import toast from "react-hot-toast";
 export default function TaskDetails({
 	isOpen,
 	onClose,
@@ -12,6 +13,14 @@ export default function TaskDetails({
 	status,
 	timestamp,
 }) {
+
+	const statusColors = {
+		PENDING: "bg-yellow-200 text-gray-800",
+		ONGOING: "bg-blue-200 text-blue-800",
+		COLLABORATIVE_TASK: "bg-indigo-200 text-yellow-800",
+		DONE: "bg-green-200 text-green-800",
+	};
+
 	const [editTitle, setEditTitle] = useState(title || "");
 	const [editDescription, setEditDescription] = useState(description || "");
 	const [editStatus, setEditStatus] = useState(status || "");
@@ -32,6 +41,8 @@ export default function TaskDetails({
 		if (isOpen) {
 			setInfoVisible(true);
 			setInputVisible(false);
+			setShowDeleteConfirm(false);
+			
 			setEditTitle(title);
 			setEditDescription(description);
 			setEditStatus(status);
@@ -43,8 +54,11 @@ export default function TaskDetails({
 		if (onClose) {
 			setInfoVisible(true);
 			setInputVisible(false);
+			setShowDeleteConfirm(false);
 		}
 	}, [onClose, title, description, status, category, timestamp]);
+
+	const [congrats,setCongrats]=useState(false);
 
 	async function handleSubmit() {
 		const updatedTask = {
@@ -57,9 +71,18 @@ export default function TaskDetails({
 		};
 		try {
 			await editTask(updatedTask);
+			if(editStatus==="DONE")
+			{
+				setCongrats(true);
+			}
+			else
+			{
+				toast("Task Updated Successfully!!!");
+				onClose();
+			}
 			reloadTrigger();
 
-			onClose();
+			
 		} catch (error) {
 			// Handle error, show message etc.
 		}
@@ -68,11 +91,13 @@ export default function TaskDetails({
 	async function handleDelete() {
 		try {
 			await deleteTask(_id);
-			setShowDeleteConfirm(false)
+			toast("Task Deleted Successfully.");
+			setShowDeleteConfirm(false);
 			reloadTrigger();
 
 			onClose();
 		} catch (error) {
+			toast("error : ",error);
 			// Handle error, show message etc.
 		}
 	}
@@ -252,10 +277,20 @@ export default function TaskDetails({
 							<div className="mb-[20px]">
 								<p className="text-xl">Status</p>
 								<div className="flex items-center gap-2">
-									<span className="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
-									<span className="text-base font-medium text-yellow-600">
-										{status}
-									</span>
+									<span
+	className={`w-3 h-3 rounded-full inline-block ${
+		status === "PENDING"
+			? "bg-yellow-500"
+			: status === "ONGOING"
+			? "bg-blue-500"
+			: status === "COLLABORATIVE_TASK"
+			? "bg-indigo-500"
+			: "bg-green-500"
+	}`}
+/>
+									<span className={`text-base rounded-full font-medium p-1 ${statusColors[status]}`}>
+	{status}
+</span>
 								</div>
 							</div>
 
@@ -292,8 +327,13 @@ export default function TaskDetails({
 					</button>
 				</div>
 				{showDeleteConfirm && (
-					<div className="absolute inset-0 bg-black/40 z-50 rounded-xl flex items-center justify-center">
-						<div className="bg-white w-[80%] max-w-md p-6 rounded-xl shadow-xl text-center flex flex-col items-center gap-6">
+					<div className="absolute inset-0 bg-white z-50 rounded-xl flex items-center justify-center">
+						<div className="bg-white  max-w-md p-6 rounded-xl  text-center flex flex-col items-center gap-6">
+						<img
+						src="/delete.jpg"
+						alt="Delete Icon"
+						className="w-[100%]"
+						/>
 							<p className="text-lg font-semibold text-gray-800">
 								Are you sure you want to delete this task?
 							</p>
@@ -310,6 +350,31 @@ export default function TaskDetails({
 								>
 									No, Cancel
 								</button>
+							</div>
+						</div>
+					</div>
+				)}
+				{congrats && (
+					<div 
+					onClick={()=>{setCongrats(false);onClose();}}
+					className="absolute inset-0 bg-white z-50 rounded-xl flex items-center justify-center">
+						<div className="bg-white  max-w-md p-6 rounded-xl  text-center flex flex-col items-center gap-6">
+						<img
+						src="/congrats.jpg"
+						alt="Delete Icon"
+						className="w-[100%]"
+						/>
+							<p className="text-lg font-semibold text-gray-800">
+								SUCCESSFULLY COMPLETED THE TASK!!!
+							</p>
+							<div className="flex gap-4">
+								<button
+									onClick={()=>{setCongrats(false);onClose();}}
+									className="px-6 py-2 bg-green-500 text-white rounded hover:bg-red-600"
+								>
+									Thanks!!!
+								</button>
+								
 							</div>
 						</div>
 					</div>

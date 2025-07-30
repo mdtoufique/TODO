@@ -56,3 +56,15 @@ export async function deleteTask(id) {
     throw error;
   }
 }
+
+
+
+export async function addTasks(taskData) {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/api/tasks`, taskData);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding task:", error);
+    throw error;
+  }
+}

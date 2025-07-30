@@ -1,7 +1,8 @@
 import { useState,useEffect } from "react";
 import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
-import { fetchTasks } from "../api";
+import { fetchTasks,addTasks } from "../api";
+import toast from "react-hot-toast";
 function Dashboard() {
 
 	const [categories,setCategories]=useState([])
@@ -76,6 +77,23 @@ function reloadTasks() {
 	const [category, setCategory] = useState("");
 	const [status, setStatus] = useState("");
 
+
+const [ShowForm, setShowForm] = useState(false);
+
+	async function handleAddTask(newTask) {
+			try {
+				await addTasks(newTask);
+				reloadTasks();
+				setShowForm(false)
+				toast.success("Task added Successfully!");
+
+				
+			} catch (error) {
+				toast.error("Failed to delete task",error);
+				// Handle error, show message etc.
+			}
+		}
+
 	return (
 		<div className="">
 			<div className="fixed top-0 left-0 w-full h-[40%] bg-gray-300 shadow flex justify-between items-center px-6 py-3 ">
@@ -132,7 +150,9 @@ function reloadTasks() {
 						></StatusSelect>
 
 						{/* Add Task Button */}
-						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
+						<button 
+						onClick={()=>setShowForm(true)}
+						className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
 							Add Task
 						</button>
 					</div>
@@ -147,6 +167,88 @@ function reloadTasks() {
 					/>
 				</div>
 			</div>
+			{ShowForm && (
+  <>
+    <div className="fixed inset-0  bg-opacity-50 z-40" ></div>
+    <div className="fixed z-50 bg-white fixed top-3/4 left-1/2 -translate-x-1/2 -translate-y-3/4 w-[90%] h-[85%] p-6 rounded-xl shadow-xl flex flex-col gap-4">
+      <h2 className="m-10 text-xl font-bold mb-4">Add New Task</h2>
+
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const newTask = {
+            title: form.title.value,
+            description: form.description.value,
+            category: form.category.value,
+            status: form.status.value,
+            timestamp: form.timestamp.value,
+          };
+
+          handleAddTask(newTask);
+        }}
+        className="space-y-4 m-10"
+      >
+        <input
+          type="text"
+          name="title"
+          maxLength={50}
+          placeholder="Task Title"
+          required
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+        <textarea
+          name="description"
+          maxLength={200}
+          placeholder="Description"
+          required
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          required
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+        <select
+          name="status"
+          required
+          className="w-full p-2 border border-gray-300 rounded"
+        >
+          <option value="">Select Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="ONGOING">Ongoing</option>
+          <option value="DONE">Done</option>
+          <option value="COLLABORATIVE_TASK">Collaborative</option>
+        </select>
+        <input
+          type="date"
+          name="timestamp"
+          required
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => setShowForm(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Add Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </>
+)}
+
 			{selectedTask && (
 				<TaskDetails
 					isOpen={showModal}
