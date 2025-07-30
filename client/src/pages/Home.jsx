@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { useState,useEffect } from "react";
 export default function Home() {
+    const navigate = useNavigate();
+    useEffect(() => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                navigate("/dashboard");
+            }
+        }, [navigate]);
 	return (
 		<div className="flex h-screen">
 			{/* Left side: Image */}
