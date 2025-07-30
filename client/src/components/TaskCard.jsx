@@ -5,7 +5,7 @@ export default function TaskCard({ task, onClick }) {
 
 	return (
 		<div
-			className="mb-8 h-[105px] border rounded shadow hover:shadow-lg cursor-pointer pt-1 pl-3"
+			className="bg-[#f6f6e9]  mb-8 h-[105px] border rounded shadow hover:shadow-lg hover:bg-gray-200 cursor-pointer pt-1 pl-3"
 			onClick={onClick}
 		>
 			<div className="flex items-center justify-between gap-2">
@@ -21,7 +21,7 @@ export default function TaskCard({ task, onClick }) {
   </span>
 </div>
 
-			<p className="text-sm">{description.slice(0, 40)}</p>
+			<p className="ml-8 rounded  text-gray-500 mr-1 text-sm">{description.slice(0, 40)}</p>
 
 			<div className="flex items-center justify-between mt-6 mr-2 text-xs text-black-400">
 				<span className="text-sm font-bold">

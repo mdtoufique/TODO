@@ -4,7 +4,6 @@ import TaskDetails from "../components/TaskDetails";
 import { fetchTasks, addTasks } from "../api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import SpinSection from "../components/SpinSection";
 function Dashboard() {
 	const navigate = useNavigate();
 	const [error, setError] = useState("");
@@ -15,7 +14,6 @@ function Dashboard() {
 	const [showModal, setShowModal] = useState(false);
 	const [selectedTask, setSelectedTask] = useState(null);
 	const [ShowForm, setShowForm] = useState(false);
-	const [showSpin,setShowSpin]=useState(false);
 	
 	useEffect(() => {
 		async function loadCategories() {
@@ -33,7 +31,7 @@ function Dashboard() {
 				const msg =
 					err.response?.data?.message || "Fetch category failed";
 				setError(msg);
-				toast.error(`Fetch category failed: ${msg}`);
+				toast(`Fetch category failed: ${msg}`);
 			}
 		}
 
@@ -95,44 +93,35 @@ function Dashboard() {
 			setShowForm(false);
 			toast.success("Task added Successfully!");
 		} catch (error) {
-			const msg =
-				error.response?.data?.message || "ADD Task failed : unknown error";
-				
-				toast.error(`Adding Task failed: ${msg}`);
+			toast.error("Failed to delete task", error);
+			// Handle error, show message etc.
 		}
 	}
 
 	return (
 		<div className="">
-			<div className="fixed top-0 left-0 w-full h-[40%] bg-gradient-to-r from-gray-300  to-gray-400 shadow flex justify-between items-center px-6 py-3 ">
+			<div className="fixed top-0 left-0 w-full h-[40%] bg-gray-300 shadow flex justify-between items-center px-6 py-3 ">
 				<header className="fixed top-0 left-0 w-full  flex items-center justify-between px-6 py-3 z-20">
-					
+					{/* Left: App Name */}
+					<div className="font-bold text-xl">Tasko</div>
 
-					<div className="font-extrabold text-4xl sm:text-5xl text-transparent bg-clip-text bg-black  tracking-wide drop-shadow-sm hover:drop-shadow-lg">
-  Tasko
-</div>
-
-					
+					{/* Center: List + Spin Buttons */}
 					<div className="flex items-center gap-4">
 						<button 
-						onClick={() => setShowSpin(false)}
+						onClick={() => navigate("/dashboard")}
 						className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
 							List
 						</button>
-						<button 
-  onClick={() => {
-    setShowSpin(true);
-  }}
-  className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
-  SPIN
-</button>
+						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
+							SPIN
+						</button>
 					</div>
 
-					
+					{/* Right: Username */}
 
 					<div className="flex items-center gap-3">
 						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-blue-700">
-							{JSON.parse(localStorage.getItem("user") || "{}")?.name}
+							Username
 						</button>
 						<button
 							onClick={handleLogout}
@@ -145,7 +134,7 @@ function Dashboard() {
 
 				<div className="mx-[10%] mb-8">
 					<h2 className="text-base sm:text-lg text-gray-600 font-medium">
-						Hi, {JSON.parse(localStorage.getItem("user") || "{}")?.name}!
+						Hi, Username!
 					</h2>
 					<h1 className="text-2xl sm:text-4xl font-bold mt-1">
 						Welcome to your Dashboard
@@ -287,12 +276,6 @@ function Dashboard() {
 					{...selectedTask}
 				/>
 			)}
-			{showSpin && (
-				<div className="fixed bg-white fixed top-3/4 left-1/2 -translate-x-1/2 -translate-y-3/4 w-[90%] h-[85%] p-6 rounded-xl shadow-xl flex flex-col gap-4 items-center gap-4 justify-center">
-			
-  <SpinSection />
-  </div>
-)}
 		</div>
 	);
 }
