@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Task from "../models/Task.js";
+import Task from "./models/Task.js";
 
 dotenv.config();
 
@@ -36,7 +36,7 @@ const sampleTasks = [
   {
     title: "Fix bug in app",
     description: "Resolve login issue reported by QA",
-    status: "FAILED",
+    status: "DONE",
     category: "development",
     timestamp: new Date("2025-06-23T00:00:00Z"),
   },
@@ -45,10 +45,7 @@ const sampleTasks = [
 async function seedTasks() {
   try {
     // Connect to local MongoDB TODO database
-    await mongoose.connect("mongodb://localhost:27017/TODO", {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect("mongodb://localhost:27017/TODO");
     console.log("MongoDB connected");
 
     // Insert tasks

@@ -44,3 +44,15 @@ export async function fetchCategories() {
     return [];
   }
 }
+
+
+export async function deleteTask(id) {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/api/tasks/${id}`);
+    console.log("Task deleted:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    throw error;
+  }
+}

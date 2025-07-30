@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { editTask } from "../api";
+import { editTask,deleteTask } from "../api";
 export default function TaskDetails({
 	isOpen,
 	onClose,
@@ -64,7 +64,18 @@ export default function TaskDetails({
 			// Handle error, show message etc.
 		}
 	}
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	async function handleDelete() {
+		try {
+			await deleteTask(_id);
+			setShowDeleteConfirm(false)
+			reloadTrigger();
 
+			onClose();
+		} catch (error) {
+			// Handle error, show message etc.
+		}
+	}
 	if (!isOpen) return null;
 
 	if (loading) {
@@ -123,7 +134,7 @@ export default function TaskDetails({
 
 					<div className="flex-1">
 						{infoVisible && (
-							<h3 className="text-2xl font-bold text-gray-900 cursor-pointer">
+							<h3 className="text-2xl mb-[20px] font-bold text-gray-900 cursor-pointer">
 								{title}
 							</h3>
 						)}
@@ -140,9 +151,9 @@ export default function TaskDetails({
 						{inputVisible && (
 							<input
 								type="text"
-                maxLength={50}
-								className="w-full text-xl font-bold text-gray-900 rounded bg-gray-100 border-b border-gray-300 pb-1
-               placeholder-gray-400 focus:outline-none focus:border-blue-500 transition"
+								maxLength={50}
+								className="bg-gray-100 text-base font-medium text-gray-700 border border-gray-300 rounded p-2 mb-[20px] w-full text-xl font-bold text-gray-900 rounded bg-gray-100 border-b border-gray-300 pb-1
+               			placeholder-gray-400 "
 								value={editTitle}
 								onChange={(e) => setEditTitle(e.target.value)}
 								placeholder={editTitle}
@@ -150,7 +161,7 @@ export default function TaskDetails({
 						)}
 
 						{infoVisible && (
-							<p className="text-gray-600 text-sm leading-relaxed">
+							<p className="mb-[20px] text-gray-600 text-sm leading-relaxed">
 								{description || "No description available. "}
 							</p>
 						)}
@@ -168,9 +179,9 @@ export default function TaskDetails({
 
 						{inputVisible && (
 							<textarea
-              maxLength={200}
-								className="w-full h-24 p-2 text-gray-700 text-sm leading-relaxed border border-gray-300 rounded resize-none
-               focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+								maxLength={200}
+								className="bg-gray-100 mb-[20px] w-full h-24 p-2 text-gray-700 text-sm leading-relaxed border border-gray-300 rounded resize-none
+               					focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
 								placeholder={editDescription}
 								value={editDescription}
 								onChange={(e) =>
@@ -179,7 +190,7 @@ export default function TaskDetails({
 							/>
 						)}
 
-						<div className=" flex items-center mt-4 gap-6">
+						<div className=" flex items-center  gap-6 mb-[15px]">
 							<div>
 								<p className="text-sm text-gray-500">
 									End Date
@@ -202,7 +213,7 @@ export default function TaskDetails({
 									{inputVisible && (
 										<input
 											type="date"
-											className="text-base font-medium text-gray-700 border border-gray-300 rounded p-2"
+											className="bg-gray-100 text-base font-medium text-gray-700 border border-gray-300 rounded p-2"
 											value={editTimestamp}
 											onChange={(e) =>
 												setEditTimestamp(e.target.value)
@@ -217,14 +228,15 @@ export default function TaskDetails({
 								</p>
 								<div className="flex items-center gap-2">
 									{infoVisible && (
-										<span className="text-base font-medium text-blue-600">
+										<span className="text-base font-medium text-gray-700 ">
 											{editCategory}
 										</span>
 									)}
 									{inputVisible && (
 										<input
 											type="text"
-											className="text-base font-medium text-blue-600"
+											maxLength={50}
+											className="bg-gray-100 text-base font-medium text-gray-700 border border-gray-300 rounded p-2"
 											value={editCategory}
 											placeholder={editCategory}
 											onChange={(e) =>
@@ -234,8 +246,11 @@ export default function TaskDetails({
 									)}
 								</div>
 							</div>
-							<div>
-								<p className="text-sm text-gray-500">Status</p>
+						</div>
+
+						<div className=" mt-4">
+							<div className="mb-[20px]">
+								<p className="text-xl">Status</p>
 								<div className="flex items-center gap-2">
 									<span className="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
 									<span className="text-base font-medium text-yellow-600">
@@ -243,14 +258,12 @@ export default function TaskDetails({
 									</span>
 								</div>
 							</div>
-						</div>
 
-						<div className=" mt-4">
 							<label className="block text-sm text-gray-600 font-medium mb-1">
 								Change Status
 							</label>
 							<select
-								className="w-[200px] p-2 border border-gray-300 rounded"
+								className="bg-gray-100 w-[200px] p-2 border border-gray-300 rounded"
 								value={editStatus}
 								onChange={(e) => setEditStatus(e.target.value)}
 							>
@@ -265,7 +278,10 @@ export default function TaskDetails({
 				</div>
 
 				<div className="flex justify-end gap-4 mt-auto">
-					<button className="px-6 py-2 bg-red-200 text-red-700 rounded hover:bg-red-300">
+					<button
+						onClick={() => setShowDeleteConfirm(true)}
+						className="px-6 py-2 bg-red-200 text-red-700 rounded hover:bg-red-300"
+					>
 						Delete Task
 					</button>
 					<button
@@ -275,6 +291,29 @@ export default function TaskDetails({
 						Submit
 					</button>
 				</div>
+				{showDeleteConfirm && (
+					<div className="absolute inset-0 bg-black/40 z-50 rounded-xl flex items-center justify-center">
+						<div className="bg-white w-[80%] max-w-md p-6 rounded-xl shadow-xl text-center flex flex-col items-center gap-6">
+							<p className="text-lg font-semibold text-gray-800">
+								Are you sure you want to delete this task?
+							</p>
+							<div className="flex gap-4">
+								<button
+									onClick={handleDelete}
+									className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+								>
+									Yes, Delete
+								</button>
+								<button
+									onClick={() => setShowDeleteConfirm(false)}
+									className="px-6 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+								>
+									No, Cancel
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
 			</div>
 		</>
 	);

@@ -45,3 +45,16 @@ export async function updateTask(req, res) {
 		res.status(500).json({ message: "Server error while updating task" });
 	}
 }
+
+export async function deleteTask(req, res) {
+  try {
+    const deleted = await Task.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.json({ message: "Task deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting task:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
