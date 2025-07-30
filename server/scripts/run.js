@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Task from "./models/Task.js";
+import Task from "../models/Task.js";
 
 dotenv.config();
 

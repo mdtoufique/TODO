@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
+import { fetchTasks } from "../api";
 function Dashboard() {
+
+	const [categories,setCategories]=useState([])
+	useEffect(() => {
+  async function loadCategories() {
+    try {
+      const fetchedTasks = await fetchTasks(); // Fetch all tasks
+      const uniqueCategories = Array.from(
+        new Set(fetchedTasks.map(task => task.category).filter(Boolean))
+      );
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+    }
+  }
+
+  loadCategories();
+}, []);
 	function CategorySelect({ value, onChange }) {
-		const categories = ["shopping", "work", "family", "health", "leisure"];
+		
 
 		return (
 			<select
@@ -22,6 +40,11 @@ function Dashboard() {
 		);
 	}
 	const [showModal, setShowModal] = useState(false);
+
+	
+	
+
+
 	const [selectedTask, setSelectedTask] = useState(null);
 	function handleTaskClick(task) {
 		setSelectedTask(task);
@@ -99,6 +122,7 @@ function reloadTasks() {
 						<CategorySelect
 							value={category}
 							onChange={(e) => setCategory(e.target.value)}
+							options={categories}
 						/>
 
 						{/* Status Select */}
