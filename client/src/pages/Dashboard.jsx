@@ -1,37 +1,56 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import TaskList from "../components/TaskList";
 import TaskDetails from "../components/TaskDetails";
-import { fetchTasks,addTasks } from "../api";
+import { fetchTasks, addTasks } from "../api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 function Dashboard() {
 	const navigate = useNavigate();
-	const [error,setError]=useState("")
-	const [categories,setCategories]=useState([])
-	function handleLogout() {
-    localStorage.clear(); 
-    navigate("/login");
-  }
+	const [error, setError] = useState("");
+	const [categories, setCategories] = useState([]);
+	const [reload, setReload] = useState(false);
+	const [category, setCategory] = useState("");
+	const [status, setStatus] = useState("");
+	const [showModal, setShowModal] = useState(false);
+	const [selectedTask, setSelectedTask] = useState(null);
+	const [ShowForm, setShowForm] = useState(false);
+	
 	useEffect(() => {
-  async function loadCategories() {
-    try {
-      const fetchedTasks = await fetchTasks(); // Fetch all tasks
-      const uniqueCategories = Array.from(
-        new Set(fetchedTasks.map(task => task.category).filter(Boolean))
-      );
-      setCategories(uniqueCategories);
-    } catch (err) {
-  const msg = err.response?.data?.message || "Fetch category failed";
-  setError(msg);
-  toast(`Fetch category failed: ${msg}`);
-}
-  }
+		async function loadCategories() {
+			try {
+				const fetchedTasks = await fetchTasks(); // Fetch all tasks
+				const uniqueCategories = Array.from(
+					new Set(
+						fetchedTasks
+							.map((task) => task.category)
+							.filter(Boolean)
+					)
+				);
+				setCategories(uniqueCategories);
+			} catch (err) {
+				const msg =
+					err.response?.data?.message || "Fetch category failed";
+				setError(msg);
+				toast(`Fetch category failed: ${msg}`);
+			}
+		}
 
-  loadCategories();
-}, []);
+		loadCategories();
+	}, [reload]);
+
+	function handleTaskClick(task) {
+		setSelectedTask(task);
+		setShowModal(true);
+	}
+
+	function reloadTasks() {
+		setReload((prev) => !prev);
+	}
+	function handleLogout() {
+		localStorage.clear();
+		navigate("/login");
+	}
 	function CategorySelect({ value, onChange }) {
-		
-
 		return (
 			<select
 				value={value}
@@ -48,24 +67,8 @@ function Dashboard() {
 			</select>
 		);
 	}
-	const [showModal, setShowModal] = useState(false);
-
-	
-	
-
-
-	const [selectedTask, setSelectedTask] = useState(null);
-	function handleTaskClick(task) {
-		setSelectedTask(task);
-		setShowModal(true);
-	}
-	const [reload, setReload] = useState(false);
-
-function reloadTasks() {
-  setReload((prev) => !prev);
-}
 	function StatusSelect({ value, onChange }) {
-		const status = ["PENDING", "ONGOING", "DONE","COLLABORATIVE_TASK"];
+		const status = ["PENDING", "ONGOING", "DONE", "COLLABORATIVE_TASK"];
 
 		return (
 			<select
@@ -82,25 +85,18 @@ function reloadTasks() {
 			</select>
 		);
 	}
-	const [category, setCategory] = useState("");
-	const [status, setStatus] = useState("");
-
-
-const [ShowForm, setShowForm] = useState(false);
 
 	async function handleAddTask(newTask) {
-			try {
-				await addTasks(newTask);
-				reloadTasks();
-				setShowForm(false)
-				toast.success("Task added Successfully!");
-
-				
-			} catch (error) {
-				toast.error("Failed to delete task",error);
-				// Handle error, show message etc.
-			}
+		try {
+			await addTasks(newTask);
+			reloadTasks();
+			setShowForm(false);
+			toast.success("Task added Successfully!");
+		} catch (error) {
+			toast.error("Failed to delete task", error);
+			// Handle error, show message etc.
 		}
+	}
 
 	return (
 		<div className="">
@@ -111,7 +107,9 @@ const [ShowForm, setShowForm] = useState(false);
 
 					{/* Center: List + Spin Buttons */}
 					<div className="flex items-center gap-4">
-						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
+						<button 
+						onClick={() => navigate("/dashboard")}
+						className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
 							List
 						</button>
 						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
@@ -122,16 +120,16 @@ const [ShowForm, setShowForm] = useState(false);
 					{/* Right: Username */}
 
 					<div className="flex items-center gap-3">
-            <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-blue-700">
-              Username
-            </button>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
+						<button className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-blue-700">
+							Username
+						</button>
+						<button
+							onClick={handleLogout}
+							className="bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm font-medium shadow hover:bg-red-700"
+						>
+							Logout
+						</button>
+					</div>
 				</header>
 
 				<div className="mx-[10%] mb-8">
@@ -166,9 +164,10 @@ const [ShowForm, setShowForm] = useState(false);
 						></StatusSelect>
 
 						{/* Add Task Button */}
-						<button 
-						onClick={()=>setShowForm(true)}
-						className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700">
+						<button
+							onClick={() => setShowForm(true)}
+							className="bg-blue-600 text-white px-3 py-1 rounded text-xs sm:text-sm shadow hover:bg-blue-700"
+						>
 							Add Task
 						</button>
 					</div>
@@ -184,86 +183,90 @@ const [ShowForm, setShowForm] = useState(false);
 				</div>
 			</div>
 			{ShowForm && (
-  <>
-    <div className="fixed inset-0  bg-opacity-50 z-40" ></div>
-    <div className="fixed z-50 bg-white fixed top-3/4 left-1/2 -translate-x-1/2 -translate-y-3/4 w-[90%] h-[85%] p-6 rounded-xl shadow-xl flex flex-col gap-4">
-      <h2 className="m-10 text-xl font-bold mb-4">Add New Task</h2>
+				<>
+					<div className="fixed inset-0  bg-opacity-50 z-40"></div>
+					<div className="fixed z-50 bg-white fixed top-3/4 left-1/2 -translate-x-1/2 -translate-y-3/4 w-[90%] h-[85%] p-6 rounded-xl shadow-xl flex flex-col gap-4">
+						<h2 className="m-10 text-xl font-bold mb-4">
+							Add New Task
+						</h2>
 
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const form = e.target;
-          const newTask = {
-            title: form.title.value,
-            description: form.description.value,
-            category: form.category.value,
-            status: form.status.value,
-            timestamp: form.timestamp.value,
-          };
+						<form
+							onSubmit={async (e) => {
+								e.preventDefault();
+								const form = e.target;
+								const newTask = {
+									title: form.title.value,
+									description: form.description.value,
+									category: form.category.value,
+									status: form.status.value,
+									timestamp: form.timestamp.value,
+								};
 
-          handleAddTask(newTask);
-        }}
-        className="space-y-4 m-10"
-      >
-        <input
-          type="text"
-          name="title"
-          maxLength={50}
-          placeholder="Task Title"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-        <textarea
-          name="description"
-          maxLength={200}
-          placeholder="Description"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-        <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-        <select
-          name="status"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        >
-          <option value="">Select Status</option>
-          <option value="PENDING">Pending</option>
-          <option value="ONGOING">Ongoing</option>
-          <option value="DONE">Done</option>
-          <option value="COLLABORATIVE_TASK">Collaborative</option>
-        </select>
-        <input
-          type="date"
-          name="timestamp"
-          required
-          className="w-full p-2 border border-gray-300 rounded"
-        />
+								handleAddTask(newTask);
+							}}
+							className="space-y-4 m-10"
+						>
+							<input
+								type="text"
+								name="title"
+								maxLength={50}
+								placeholder="Task Title"
+								required
+								className="w-full p-2 border border-gray-300 rounded"
+							/>
+							<textarea
+								name="description"
+								maxLength={200}
+								placeholder="Description"
+								required
+								className="w-full p-2 border border-gray-300 rounded"
+							/>
+							<input
+								type="text"
+								name="category"
+								placeholder="Category"
+								required
+								className="w-full p-2 border border-gray-300 rounded"
+							/>
+							<select
+								name="status"
+								required
+								className="w-full p-2 border border-gray-300 rounded"
+							>
+								<option value="">Select Status</option>
+								<option value="PENDING">Pending</option>
+								<option value="ONGOING">Ongoing</option>
+								<option value="DONE">Done</option>
+								<option value="COLLABORATIVE_TASK">
+									Collaborative
+								</option>
+							</select>
+							<input
+								type="date"
+								name="timestamp"
+								required
+								className="w-full p-2 border border-gray-300 rounded"
+							/>
 
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => setShowForm(false)}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Add Task
-          </button>
-        </div>
-      </form>
-    </div>
-  </>
-)}
+							<div className="flex justify-end gap-3">
+								<button
+									type="button"
+									onClick={() => setShowForm(false)}
+									className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+								>
+									Cancel
+								</button>
+								<button
+									type="submit"
+									className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+								>
+									Add Task
+								</button>
+							</div>
+						</form>
+					</div>
+				</>
+			)}
 
 			{selectedTask && (
 				<TaskDetails
@@ -271,7 +274,6 @@ const [ShowForm, setShowForm] = useState(false);
 					onClose={() => setShowModal(false)}
 					reloadTrigger={reloadTasks}
 					{...selectedTask}
-					
 				/>
 			)}
 		</div>
