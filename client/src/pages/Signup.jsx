@@ -14,6 +14,20 @@ export default function Signup() {
 	const [showConfirm, setShowConfirm] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			navigate("/dashboard");
+		}
+	}, [navigate]);
+
+    
+	function handleChange(e) {
+		setForm({ ...form, [e.target.name]: e.target.value });
+	}
+
+
 	function handleChange(e) {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	}
