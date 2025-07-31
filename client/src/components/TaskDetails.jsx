@@ -333,6 +333,7 @@ export default function TaskDetails({
 						<div className="bg-white  max-w-md p-6 rounded-xl  text-center flex flex-col items-center gap-6">
 							<img
 								src="/delete.jpg"
+								loading="lazy"
 								alt="Delete Icon"
 								className="w-[100%]"
 							/>
@@ -367,6 +368,7 @@ export default function TaskDetails({
 						<div className="bg-white  max-w-md p-6 rounded-xl  text-center flex flex-col items-center gap-6">
 							<img
 								src="/congrats.jpg"
+								loading="lazy"
 								alt="Delete Icon"
 								className="w-[100%]"
 							/>

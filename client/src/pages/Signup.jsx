@@ -59,6 +59,7 @@ export default function Signup() {
 			<div className="h-screen hidden md:block">
 				<img
 					src="/signup.jpg"
+                    loading="lazy"
 					alt="Signup"
 					className="w-full h-full object-cover"
 				/>

@@ -37,6 +37,7 @@ function TaskList({ category, status, reload,onTaskClick }) {
 					<div className="flex flex-wrap  justify-center">
 						<img
 						src="/notask.jpg"
+						loading="lazy"
 						alt="NO Task Icon"
 						className="w-[60%] "
 						/>

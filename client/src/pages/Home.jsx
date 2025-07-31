@@ -15,6 +15,7 @@ export default function Home() {
 			<div className="w-1/2 hidden md:block">
 				<img
 					src="/home.jpg"
+                    loading="lazy"
 					alt="Home Visual"
 					className="h-full w-full object-cover"
 				/>
