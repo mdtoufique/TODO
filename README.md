@@ -100,6 +100,7 @@ root/
 ├── README.md
 └── package.json
 ```
+---
 
 ## 🌐 API Endpoints
 
@@ -167,6 +168,16 @@ npm run dev
 - JWT tokens signed with strong secret  
 - Protected routes verify JWT on every request  
 - Tokens expire after set duration (default 1 day)  
+
+---
+
+## 🚀 Live URLs
+
+- **Frontend URL:**  
+  `https://todoappmern.vercel.app`
+
+- **Backend API URL:**  
+  `https://todo-sand-chi-48.vercel.app`
 
 ---
 
