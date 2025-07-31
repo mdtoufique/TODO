@@ -119,7 +119,7 @@ console.log("Filtered (not DONE):", filtered);
     spinDuration={0.8}
   />
 ) : (
-  <p className="text-gray-500 mt-4">No valid tasks to spin.</p>
+  <p className="text-gray-500 mt-4">Loading Tasks...</p>
 )}
 
       <button
