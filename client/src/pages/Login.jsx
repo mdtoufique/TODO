@@ -28,12 +28,12 @@ export default function Login() {
 			localStorage.setItem("token", data.token);
 			localStorage.setItem("user", JSON.stringify(data.user));
 			navigate("/dashboard");
-			toast("Login Successfull");
+			toast.success("Login Successfull");
 			// redirect or update UI on successful login
 		} catch (err) {
 			const msg = err.response?.data?.message || "Login failed";
 			setError(msg);
-			toast(`Login failed: ${msg}`);
+			toast.error(`Login failed: ${msg}`);
 		}
 	}
 

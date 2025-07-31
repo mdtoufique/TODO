@@ -43,13 +43,13 @@ export default function Signup() {
     try {
       await signupUser(form);
       navigate("/login");
-      toast("Sign up Sueccessful.Please Login.");
+      toast.success("Sign up Sueccessful.Please Login.");
 
       // success logic here, e.g. redirect or message
     } catch (err) {
   const msg = err.response?.data?.message || "";
   setError(msg);
-  toast(`Signup failed: ${msg}`);
+  toast.error(`Signup failed: ${msg}`);
 }
   }
 
