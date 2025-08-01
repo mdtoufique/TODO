@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config(); 
 
 const JWT_SECRET = process.env.JWT_SECRET ;
-const JWT_EXPIRES_IN = "7d"
+const JWT_EXPIRES_IN = "30d"
 
 export async function signup(req, res) {
   const { name, email, password } = req.body;
