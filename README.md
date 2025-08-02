@@ -1,4 +1,4 @@
-# ✅ Toufique Todo App – Full Stack (MERN) with JWT Authentication
+# ✅ Todo App – Full Stack (MERN) with JWT Authentication
 
 This is a full-stack **Todo App** built with the **MERN stack** (MongoDB, Express, React, Node.js) featuring **User Registration**, **Login**, and **JWT-based authentication**. Each user has their own tasks, securely managed via JSON Web Tokens.
 
